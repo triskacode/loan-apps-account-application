@@ -1,3 +1,4 @@
+import { Transform } from 'class-transformer';
 import {
   IsEmail,
   IsEnum,
@@ -6,18 +7,20 @@ import {
   IsOptional,
   IsString,
 } from 'class-validator';
-import { Transform } from 'class-transformer';
 import { UserRole, UserState } from 'src/domain/user';
 
-export class CreateAccountDto {
+export class DeleteAccountDto {
   @IsNumber()
   @IsNotEmpty()
   id: number;
 
   @IsEmail()
   @IsString()
-  @IsNotEmpty()
-  email: string;
+  @IsOptional()
+  @Transform(({ value }) =>
+    value !== null && value !== undefined && value !== '' ? value : undefined,
+  )
+  email?: string;
 
   @IsString()
   @IsOptional()

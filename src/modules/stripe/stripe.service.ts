@@ -15,4 +15,8 @@ export class StripeService {
   async createCustumer(email: string) {
     return this.stripe.customers.create({ email });
   }
+
+  async deleteCustumer(customerId: string) {
+    return this.stripe.customers.del(customerId);
+  }
 }

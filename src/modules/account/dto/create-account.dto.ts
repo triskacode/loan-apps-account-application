@@ -1,16 +1,9 @@
-import {
-  IsEmail,
-  IsEnum,
-  IsNotEmpty,
-  IsNumber,
-  IsOptional,
-  IsString,
-} from 'class-validator';
-import { Transform } from 'class-transformer';
-import { UserRole, UserState } from 'src/domain/user';
+import { Type } from 'class-transformer';
+import { IsEmail, IsNotEmpty, IsNumber, IsString } from 'class-validator';
 
 export class CreateAccountDto {
   @IsNumber()
+  @Type(() => Number)
   @IsNotEmpty()
   id: number;
 
@@ -18,25 +11,4 @@ export class CreateAccountDto {
   @IsString()
   @IsNotEmpty()
   email: string;
-
-  @IsString()
-  @IsOptional()
-  @Transform(({ value }) =>
-    value !== null && value !== undefined && value !== '' ? value : undefined,
-  )
-  password?: string;
-
-  @IsEnum(UserRole)
-  @IsOptional()
-  @Transform(({ value }) =>
-    value !== null && value !== undefined && value !== '' ? value : undefined,
-  )
-  role?: UserRole;
-
-  @IsEnum(UserState)
-  @IsOptional()
-  @Transform(({ value }) =>
-    value !== null && value !== undefined && value !== '' ? value : undefined,
-  )
-  state?: UserState;
 }

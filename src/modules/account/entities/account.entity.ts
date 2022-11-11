@@ -1,5 +1,3 @@
-import { User } from 'src/domain/user';
-import Stripe from 'stripe';
 import {
   Column,
   CreateDateColumn,
@@ -17,6 +15,10 @@ export class Account {
   @Column({ unique: true })
   @Index()
   customer_id!: string;
+
+  @Column({ unique: true })
+  @Index()
+  email!: string;
 
   @Column({ default: 0 })
   loan_balance: number;

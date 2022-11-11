@@ -12,7 +12,23 @@ export class AccountRepository {
   async create(entity: Account): Promise<Account> {
     try {
       const newEntity = await this.repository.save(entity);
-      console.log('create account', newEntity);
+
+      return newEntity;
+    } catch (err) {
+      if (err.code === 'SQLITE_CONSTRAINT_UNIQUE')
+        throw new BadRequestException('Account already exists');
+
+      throw err;
+    }
+  }
+
+  async update(entity: Account, updateSet: Partial<Account>): Promise<Account> {
+    try {
+      entity.email = updateSet.email ?? entity.email;
+      entity.customer_id = updateSet.customer_id ?? entity.customer_id;
+      entity.loan_balance = updateSet.loan_balance ?? entity.loan_balance;
+
+      const newEntity = await this.repository.save(entity);
 
       return newEntity;
     } catch (err) {
@@ -25,7 +41,6 @@ export class AccountRepository {
 
   async delete(entity: Account): Promise<Account> {
     await this.repository.delete(entity.id);
-    console.log('delete account', entity);
 
     return entity;
   }

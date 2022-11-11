@@ -5,7 +5,7 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
-import { catchError, firstValueFrom, throwError } from 'rxjs';
+import { catchError, firstValueFrom, throwError, timeout } from 'rxjs';
 
 export class MicroserviceHelper {
   static async sendRequest<TResult = any, TInput = any>(
@@ -14,6 +14,7 @@ export class MicroserviceHelper {
     data: TInput,
   ): Promise<TResult> {
     const result = to.send<{ data: TResult }, TInput>(endpoint, data).pipe(
+      timeout(5000),
       catchError((err) =>
         throwError(() => {
           switch (err.code) {

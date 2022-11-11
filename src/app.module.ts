@@ -9,6 +9,7 @@ import { PaymentConfig } from './config/payment.config';
 import { AccountModule } from './modules/account/account.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { StripeModule } from './modules/stripe/stripe.module';
+import { UserModule } from './modules/user/user.module';
 
 @Module({
   imports: [
@@ -30,6 +31,7 @@ import { StripeModule } from './modules/stripe/stripe.module';
     AccountModule,
     StripeModule,
     AuthModule,
+    UserModule,
   ],
   controllers: [AppController],
   providers: [],

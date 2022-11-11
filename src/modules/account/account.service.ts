@@ -78,4 +78,8 @@ export class AccountService {
 
     return entity;
   }
+
+  async getStats() {
+    return this.accountRepository.getStats();
+  }
 }

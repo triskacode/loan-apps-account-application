@@ -1,12 +1,15 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { UserState } from 'src/domain/user';
 import { Repository } from 'typeorm';
+import { UserService } from '../user/user.service';
 import { Account } from './entities/account.entity';
 
 @Injectable()
 export class AccountRepository {
   constructor(
     @InjectRepository(Account) private repository: Repository<Account>,
+    private userService: UserService,
   ) {}
 
   async create(entity: Account): Promise<Account> {
@@ -47,5 +50,13 @@ export class AccountRepository {
 
   async findById(id: Account['id']): Promise<Account> {
     return this.repository.createQueryBuilder('account').where({ id }).getOne();
+  }
+
+  async getStats() {
+    const activeUsers = await this.userService.findAllUser({
+      state: UserState.ACTIVE,
+    });
+
+    return activeUsers;
   }
 }

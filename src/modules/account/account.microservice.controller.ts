@@ -1,4 +1,9 @@
-import { Controller, UseFilters, UseInterceptors } from '@nestjs/common';
+import {
+  Controller,
+  Logger,
+  UseFilters,
+  UseInterceptors,
+} from '@nestjs/common';
 import { EventPattern } from '@nestjs/microservices';
 import { MicroservcieExceptionFilter } from 'src/common/filters/microservice-exception.filter';
 import { TransformResponseInterceptor } from 'src/common/interceptors/transform-response.interceptor';
@@ -16,31 +21,47 @@ export class AccountMicroserviceController {
   constructor(private accountService: AccountService) {}
 
   @EventPattern('user-activated')
-  handleUserActivated(dto: HandleUserActivatedDto) {
-    console.log('user-activated');
-    this.accountService.create(dto).then(console.log);
+  async handleUserActivated(dto: HandleUserActivatedDto) {
+    try {
+      Logger.debug('handle user-activated', 'AccountMicroserviceController');
+      await this.accountService.create(dto).then(console.log);
+    } catch (err) {
+      Logger.error(err.message, 'AccountMicroserviceController');
+    }
   }
 
   @EventPattern('user-updated')
-  handleUserUpdated(dto: HandleUserUpdatedDto) {
-    console.log('user-updated');
-    this.accountService.update(dto.id, dto).then(console.log);
+  async handleUserUpdated(dto: HandleUserUpdatedDto) {
+    try {
+      Logger.debug('handle user-updated', 'AccountMicroserviceController');
+      await this.accountService.update(dto.id, dto).then(console.log);
+    } catch (err) {
+      Logger.error(err.message, 'AccountMicroserviceController');
+    }
   }
 
   @EventPattern('user-deleted')
-  handleUserDeleted(dto: HandleUserDeletedDto) {
-    console.log('user-deleted');
-    this.accountService.delete(dto.id).then(console.log);
+  async handleUserDeleted(dto: HandleUserDeletedDto) {
+    try {
+      Logger.debug('handle user-deleted', 'AccountMicroserviceController');
+      await this.accountService.delete(dto.id).then(console.log);
+    } catch (err) {
+      Logger.error(err.message, 'AccountMicroserviceController');
+    }
   }
 
   @EventPattern('loan-approved')
-  handleLoanApproved(dto: HandleLoanApprovedDto) {
-    console.log('loan-approved');
-    this.accountService
-      .updateBalance(dto.user_id, {
-        amount: dto.amount,
-        type: UpdateBalanceType.INCREMENT,
-      })
-      .then(console.log);
+  async handleLoanApproved(dto: HandleLoanApprovedDto) {
+    try {
+      Logger.debug('handle loan-approved', 'AccountMicroserviceController');
+      await this.accountService
+        .updateBalance(dto.user_id, {
+          amount: dto.amount,
+          type: UpdateBalanceType.INCREMENT,
+        })
+        .then(console.log);
+    } catch (err) {
+      Logger.error(err.message, 'AccountMicroserviceController');
+    }
   }
 }

@@ -1,6 +1,6 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { UserState } from 'src/domain/user';
+import { UserRole, UserState } from 'src/domain/user';
 import { Repository } from 'typeorm';
 import { UserService } from '../user/user.service';
 import { Account } from './entities/account.entity';
@@ -53,10 +53,18 @@ export class AccountRepository {
   }
 
   async getStats() {
-    const activeUsers = await this.userService.findAllUser({
-      state: UserState.ACTIVE,
-    });
+    const activeUserIds = (
+      await this.userService.findAllUser({
+        role: UserRole.USER,
+        state: UserState.ACTIVE,
+      })
+    ).map((user) => user.id);
 
-    return activeUsers;
+    return this.repository
+      .createQueryBuilder('account')
+      .where('id IN (:...ids)', { ids: activeUserIds })
+      .select('COUNT(*)', 'count_account')
+      .addSelect('SUM(account.loan_balance)', 'loan_balance')
+      .getRawMany();
   }
 }

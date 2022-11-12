@@ -62,7 +62,7 @@ export class AccountMicroserviceController {
   async handleUserActivated(dto: HandleUserActivatedDto) {
     try {
       Logger.debug('handle user-activated', 'AccountMicroserviceController');
-      await this.accountService.create(dto).then(console.log);
+      await this.accountService.create(dto);
     } catch (err) {
       Logger.error(err.message, 'AccountMicroserviceController');
     }
@@ -72,7 +72,7 @@ export class AccountMicroserviceController {
   async handleUserUpdated(dto: HandleUserUpdatedDto) {
     try {
       Logger.debug('handle user-updated', 'AccountMicroserviceController');
-      await this.accountService.update(dto.id, dto).then(console.log);
+      await this.accountService.update(dto.id, dto);
     } catch (err) {
       Logger.error(err.message, 'AccountMicroserviceController');
     }
@@ -82,7 +82,7 @@ export class AccountMicroserviceController {
   async handleUserDeleted(dto: HandleUserDeletedDto) {
     try {
       Logger.debug('handle user-deleted', 'AccountMicroserviceController');
-      await this.accountService.delete(dto.id).then(console.log);
+      await this.accountService.delete(dto.id);
     } catch (err) {
       Logger.error(err.message, 'AccountMicroserviceController');
     }
@@ -92,12 +92,10 @@ export class AccountMicroserviceController {
   async handleLoanApproved(dto: HandleLoanApprovedDto) {
     try {
       Logger.debug('handle loan-approved', 'AccountMicroserviceController');
-      await this.accountService
-        .updateBalance(dto.user_id, {
-          amount: dto.amount,
-          type: UpdateBalanceType.INCREMENT,
-        })
-        .then(console.log);
+      await this.accountService.updateBalance(dto.user_id, {
+        amount: dto.amount,
+        type: UpdateBalanceType.INCREMENT,
+      });
     } catch (err) {
       Logger.error(err.message, 'AccountMicroserviceController');
     }

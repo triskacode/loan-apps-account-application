@@ -55,7 +55,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
               : null
             : 'Whoops, something went wrong';
     }
-    console.log(exception);
+
     response
       .status(
         exception instanceof HttpException

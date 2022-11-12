@@ -22,10 +22,10 @@ import { UserModule } from './modules/user/user.module';
       useFactory: (configService: ConfigService) => ({
         type: 'better-sqlite3',
         database: configService.get('database.name'),
+        logger: 'advanced-console',
         autoLoadEntities: true,
         synchronize: true,
-        logging: true,
-        logger: 'advanced-console',
+        logging: configService.get('app.env') === 'development' ? true : false,
       }),
     }),
     AccountModule,

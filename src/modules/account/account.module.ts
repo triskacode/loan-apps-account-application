@@ -11,5 +11,6 @@ import { AccountHttpController } from './account.http.controller';
   imports: [TypeOrmModule.forFeature([Account]), StripeModule],
   controllers: [AccountMicroserviceController, AccountHttpController],
   providers: [AccountService, AccountRepository],
+  exports: [AccountService, AccountRepository],
 })
 export class AccountModule {}

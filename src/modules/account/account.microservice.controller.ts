@@ -1,12 +1,19 @@
 import {
+  BadRequestException,
   Controller,
+  Headers,
   Logger,
+  Post,
+  RawBodyRequest,
+  Req,
   UseFilters,
   UseInterceptors,
 } from '@nestjs/common';
 import { EventPattern } from '@nestjs/microservices';
 import { MicroservcieExceptionFilter } from 'src/common/filters/microservice-exception.filter';
 import { TransformResponseInterceptor } from 'src/common/interceptors/transform-response.interceptor';
+import Stripe from 'stripe';
+import { StripeService } from '../stripe/stripe.service';
 import { AccountService } from './account.service';
 import { UpdateBalanceType } from './account.types';
 import { HandleLoanApprovedDto } from './dto/handle-loan-approved.dto';
@@ -18,7 +25,38 @@ import { HandleUserUpdatedDto } from './dto/handle-user-updated.dto';
 @UseFilters(MicroservcieExceptionFilter)
 @UseInterceptors(TransformResponseInterceptor)
 export class AccountMicroserviceController {
-  constructor(private accountService: AccountService) {}
+  constructor(
+    private accountService: AccountService,
+    private stripeService: StripeService,
+  ) {}
+
+  @Post('/webhook/stripe')
+  async stripeChange(
+    @Headers('stripe-signature') signature: string,
+    @Req() req: RawBodyRequest<Request>,
+  ) {
+    let event: Stripe.Event;
+
+    try {
+      event = await this.stripeService.constructWebhookEvent(
+        req.rawBody,
+        signature,
+      );
+    } catch (err) {
+      throw new BadRequestException(err.message);
+    }
+
+    switch (event.type) {
+      case 'payment_intent.succeeded':
+        const paymentIntent = event.data.object as any;
+        return this.accountService.updateBalanceByCustomerId(
+          paymentIntent.customer,
+          { amount: paymentIntent.amount, type: UpdateBalanceType.DECREMENT },
+        );
+    }
+
+    return 'OK';
+  }
 
   @EventPattern('user-activated')
   async handleUserActivated(dto: HandleUserActivatedDto) {

@@ -52,6 +52,13 @@ export class AccountRepository {
     return this.repository.createQueryBuilder('account').where({ id }).getOne();
   }
 
+  async findByCustomerId(customerId: Account['customer_id']): Promise<Account> {
+    return this.repository
+      .createQueryBuilder('account')
+      .where({ customer_id: customerId })
+      .getOne();
+  }
+
   async getStats() {
     const activeUserIds = (
       await this.userService.findAllUser({
@@ -65,6 +72,6 @@ export class AccountRepository {
       .where('id IN (:...ids)', { ids: activeUserIds })
       .select('COUNT(*)', 'count_account')
       .addSelect('SUM(account.loan_balance)', 'loan_balance')
-      .getRawMany();
+      .getRawOne();
   }
 }

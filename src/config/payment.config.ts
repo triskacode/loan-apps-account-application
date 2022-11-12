@@ -1,7 +1,9 @@
 import { registerAs } from '@nestjs/config';
 
 export const PaymentConfig = registerAs('payment', () => ({
+  currency: 'usd',
   stripe: {
-    key: process.env.STRIPE_SECRET_KEY,
+    apiSecretKey: process.env.STRIPE_API_SECRET_KEY,
+    endpointSecretKey: process.env.STRIPE_ENDPOINT_SECRET,
   },
 }));
